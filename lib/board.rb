@@ -60,7 +60,7 @@ class Board
         valid_move = valid_move(current_position, target_position)
 
         # if @board[target_row][target_col].nil? || @board[target_row][target_col].color != piece.color
-        if valid_move
+        if valid_move 
 
             # Get piece
             piece = @board[current_row][current_col]
@@ -86,7 +86,14 @@ class Board
         true
     end
 
-    def check_attack(current_position, target_position)
+    def check_attack(target_position)
+
+        target_row, target_col = target_position
+
+        if @board[target_row][target_col]
+            true
+        else
+        false
     end
 end
 
@@ -94,3 +101,4 @@ board = Board.new
 board.make_move([1,1], [3,1])
 board.display
 board.valid_move([0,2], [1,1])
+
