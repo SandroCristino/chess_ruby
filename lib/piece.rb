@@ -66,7 +66,7 @@ class Bishop < Piece
   end
 
   def valid_moves(current_position, target_position)
-    diagonal = (current_position[0] - current_position[1]) == (target_position[0] - target_position[1])
+    diagonal = (current_position[0] - target_position[0]).abs == (current_position[1] - target_position[1]).abs
 
     return true if diagonal
 
@@ -98,11 +98,11 @@ class Pawn < Piece
 
   def valid_moves(current_position, target_position)
     # Two steps move
-    two_steps_move = current_position[1] == 2 || current_position[1] == 7
+    two_steps_move = current_position[1] == 1 || current_position[1] == 6
 
     # Black is above
-    black_legal_move = color == :black && current_position[1] + 1 == target_position[1]
-    white_legal_move = color == :white && current_position[1] - 1 == target_position[1]
+    black_legal_move = color == :black && current_position[0] + 1 == target_position[0]
+    white_legal_move = color == :white && current_position[0] - 1 == target_position[0]
 
     # One step move
     one_step_move = black_legal_move || white_legal_move

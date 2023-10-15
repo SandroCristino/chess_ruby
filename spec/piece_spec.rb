@@ -29,10 +29,10 @@ describe 'valid moves' do
 
     it 'allowed moves' do
       # Horizontal move
-      expect(queen.valid_moves([3, 3], [5, 3])).to be true
+      expect(queen.valid_moves([3, 3], [3, 5])).to be true
 
       # Vertical move
-      expect(queen.valid_moves([3, 3], [3, 5])).to be true
+      expect(queen.valid_moves([3, 3], [5, 3])).to be true
 
       # Diagonal move
       expect(queen.valid_moves([3, 3], [1, 1])).to be true
@@ -50,10 +50,10 @@ describe 'valid moves' do
     rook = Rook.new(:black)
 
     it 'allowed moves' do
-      # Horizontal move
+      # Vertical move
       expect(rook.valid_moves([3, 3], [5, 3])).to be true
 
-      # Vertical move
+      # Horizontal move
       expect(rook.valid_moves([3, 3], [3, 5])).to be true
     end
 
@@ -113,13 +113,13 @@ describe 'valid moves' do
 
     it 'allowed moves' do
       # One step ahead
-      expect(pawn_black.valid_moves([3, 3], [3, 4])).to be true
-      expect(pawn_black.valid_moves([1, 4], [1, 5])).to be true
-      expect(pawn_white.valid_moves([3, 3], [3, 2])).to be true
+      expect(pawn_black.valid_moves([3, 3], [4, 3])).to be true
+      expect(pawn_black.valid_moves([4, 1], [5, 1])).to be true
+      expect(pawn_white.valid_moves([3, 3], [2, 3])).to be true
 
       # Two steps if first move
-      expect(pawn_black.valid_moves([2, 2], [2, 4])).to be true
-      expect(pawn_white.valid_moves([2, 7], [2, 5])).to be true
+      expect(pawn_black.valid_moves([1, 1], [3, 1])).to be true
+      expect(pawn_white.valid_moves([6, 1], [4, 1])).to be true
     end
 
     it 'allowed moves' do
@@ -131,4 +131,3 @@ describe 'valid moves' do
     end
   end
 end
-
