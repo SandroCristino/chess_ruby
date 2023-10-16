@@ -5,6 +5,8 @@ class Piece
     @color = color      # Either white or black
     @symbol = color == :white ? '♔' : '♚'
   end
+
+  
 end
 
 class King < Piece
@@ -98,7 +100,7 @@ class Pawn < Piece
 
   def valid_moves(current_position, target_position)
     # Two steps move
-    two_steps_move = current_position[1] == 1 || current_position[1] == 6
+    two_steps_move = current_position[0] == 1 || current_position[0] == 6
 
     # Black is above
     black_legal_move = color == :black && current_position[0] + 1 == target_position[0]

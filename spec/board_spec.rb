@@ -20,13 +20,27 @@ describe 'board' do
 
             # Bishop black
             board.make_move([1,1], [3,1])
-            board.display
             expect(board.valid_move([0,2], [1,1])).to be true
         end
 
         it 'ilegal moves' do
             expect(board.valid_move([7,1], [7,4])).to be false
             expect(board.valid_move([0,0], [6,1])).to be false
+        end
+    end
+
+    describe 'check?' do
+        
+        # Create instance
+        board = Board.new
+
+        it 'check' do
+            board.make_move([1,3], [2,3])
+            board.make_move([0,4], [1,3])
+            board.make_move([6,6], [4,6])
+            board.make_move([7,5], [6,6])
+            board.make_move([6,6], [2,2])
+            expect(board.check?(:black)).to be true
         end
     end
 end

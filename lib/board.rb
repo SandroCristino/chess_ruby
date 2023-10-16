@@ -36,11 +36,11 @@ class Board
     end
 
     def display
-        puts "    a   b   c   d   e   f   g   h "
+        puts "  a   b   c   d   e   f   g   h "
         puts "  ---------------------------------"
     
         @board.each_with_index do |row, index|
-          print "#{8 - index} |"
+          print "#{index} |"
           row.each do |square|
             if square.nil?
               print "   |"
@@ -57,10 +57,10 @@ class Board
         target_row, target_col = target_position
 
         # Check valid move
-        valid_move = valid_move(current_position, target_position)
+        valid_move_result = valid_move(current_position, target_position)
 
         # if @board[target_row][target_col].nil? || @board[target_row][target_col].color != piece.color
-        if valid_move 
+        if valid_move_result 
 
             # Get piece
             piece = @board[current_row][current_col]
@@ -81,6 +81,9 @@ class Board
         # Get piece 
         piece = @board[current_row][current_col]
 
+        # Check square between current and target position
+
+
         # Check if square is not empty and move is valid
         return false if piece.nil? || !piece.valid_moves(current_position, target_position)
         true
@@ -93,12 +96,44 @@ class Board
         if @board[target_row][target_col]
             true
         else
-        false
+            false
+        end
+    end
+
+    def check?(color)
+
+        # Find the kind
+        king = find_king(color)
+
+        # Get opponent pieces
+        opponent_color = (color == :white) ? :black : :white
+        opponent_pieces = find_pieces(opponent_color)
+
+        # Check opponent pieces moves
+        opponent_pieces.each do |piece|
+            return true if piece.valid_moves(piece_position(piece), piece_position(king))
+        end
+    end
+
+    # private
+
+    def find_king(color)
+        @board.flatten.find {|piece| piece.is_a?(King) && piece.color == color}
+    end
+
+    def find_pieces(color)
+        @board.flatten.select {|piece| piece.color == color}
+    end
+
+    def piece_position(piece)
+        @board.each_with_index do |row, row_index|
+          col_index = row.index(piece)
+          return [row_index, col_index] if col_index
+        end
+        nil
     end
 end
 
 board = Board.new
-board.make_move([1,1], [3,1])
+board.make_move([1,3], [3,3])
 board.display
-board.valid_move([0,2], [1,1])
-
