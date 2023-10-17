@@ -37,7 +37,7 @@ class Queen < Piece
   def valid_moves(current_position, target_position)
     horizontal = current_position[1] == target_position[1]
     vertical = current_position[0] == target_position[0]
-    diagonal = (current_position[0] - current_position[1]) == (target_position[0] - target_position[1])
+    diagonal = (current_position[0] - target_position[0]).abs == (current_position[1] - target_position[1]).abs
 
     return true if horizontal || vertical || diagonal
 
