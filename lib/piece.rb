@@ -5,8 +5,6 @@ class Piece
     @color = color      # Either white or black
     @symbol = color == :white ? '♔' : '♚'
   end
-
-  
 end
 
 class King < Piece
@@ -16,15 +14,16 @@ class King < Piece
   end
 
   def valid_moves(current_position, target_position)
-    row_difference = (current_position[0] - target_position[0]).abs
-    col_dfference = (current_position[1] - current_position[1]).abs
+    # Extract current position coordinates
+    current_row, current_col = current_position
+    target_row, target_col = target_position
 
-    # King can move 1 in any direction
-    return true if row_difference <= 1 && col_dfference <= 1
+    # Calculate the absolute row and column differences
+    row_difference = (current_row - target_row).abs
+    col_difference = (current_col - target_col).abs
 
-    false
-
-    # NOTE: Casteling defined in Board
+    # A King can move one square in any direction
+    (row_difference <= 1) && (col_difference <= 1)
   end
 end
 

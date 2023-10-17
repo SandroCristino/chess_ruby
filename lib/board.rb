@@ -113,9 +113,12 @@ class Board
     opponent_pieces.each do |piece|
       return true if piece.valid_moves(piece_position(piece), piece_position(king))
     end
+
+    false
   end
 
   def checkmate?(color)
+    # Find king
     king = find_king(color)
     king_position = piece_position(king)
 
@@ -142,6 +145,8 @@ class Board
 
     true
   end
+
+  def stalemate?(color); end
 
   private
 
