@@ -8,7 +8,7 @@ describe 'board' do
 
     it 'allowed moves' do
       # Pawn black two steps
-      expect(board.valid_move([1, 1], [1, 3])).to be true
+      expect(board.valid_move([1, 1], [3, 1])).to be true
 
       # Knight black and white
       expect(board.valid_move([0, 1], [2, 0])).to be true
@@ -17,6 +17,22 @@ describe 'board' do
       # Bishop black
       board.make_move([1, 1], [3, 1])
       expect(board.valid_move([0, 2], [1, 1])).to be true
+    end
+
+    it 'check if square empty between current and target location' do
+      board_template = Array.new(8) {Array.new(8, nil)}
+      board_template[1][1] = Pawn.new(:black, [1,1])
+      board_template[1][3] = Rook.new(:black, [1,3])
+      board_template[2][2] = Pawn.new(:black, [2,2])
+      board_template[3][1] = Bishop.new(:white, [3,1])
+
+      new_board = Board.new(board_template)
+
+      # Rook passes pawn
+      expect(new_board.valid_move([1,3], [1,0])).to be false
+
+      # Bishop passes pawn
+      expect(new_board.valid_move([3,1], [1,3]))
     end
 
     it 'ilegal moves' do

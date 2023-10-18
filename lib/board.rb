@@ -86,13 +86,34 @@ class Board
     # Get piece
     piece = @board[current_row][current_col]
 
-    # Check square between current and target position
+    # Check if square is not empty, move is valid 
+    return false if piece.nil? || !piece.valid_moves(current_position, target_position) 
 
-    # Check if square is not empty and move is valid
-    return false if piece.nil? || !piece.valid_moves(current_position, target_position)
+    # Check if target position is own player
+    if !@board[target_row][target_col].nil?
+      return false if @board[target_row][target_col].color == piece.color
+    end
+
+    # Check square between current and target position
+    row_difference = current_row - target_row
+    col_difference = current_col - target_col
+    distance = [row_difference.abs, col_difference.abs].max
+
+    # Iterate over each square between current and target position
+    (1...distance).each do |step|
+
+      # Skip if piece is kinght
+      next if piece.is_a?(Knight)
+
+      row = current_row - (row_difference * step / distance)
+      col = current_col - (col_difference * step / distance)
+      return false unless @board[row][col].nil? 
+    end
 
     true
   end
+
+
 
   def check_attack(target_position)
     target_row, target_col = target_position
@@ -191,7 +212,7 @@ class Board
     false
   end
 
-  # private
+  private
 
   def find_king(color)
     @board.flatten.find { |piece| piece.is_a?(King) && piece.color == color }
@@ -204,5 +225,8 @@ class Board
   end
 end
 
+board = Board.new
+
+board.valid_move([1, 1], [3, 1])
 
 
