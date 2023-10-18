@@ -117,4 +117,29 @@ describe 'board' do
       expect(board.stalemate?(:white)).to be false
     end
   end
+
+  describe 'draw?' do
+
+    it 'return false' do
+      board_template = Array.new(8) {Array.new(8, nil)}
+      board_template[1][1] = King.new(:black, [1,2])
+      board_template[4][1] = Pawn.new(:black, [4,2])
+      board_template[6][6] = King.new(:white, [6,6])
+      board_template[6][1] = Queen.new(:black, [6,1])
+
+      board = Board.new(board_template)
+      expect(board.draw?).to be false
+    end
+
+    it 'return true' do
+      board_template = Array.new(8) {Array.new(8, nil)}
+      board_template[1][1] = King.new(:black, [1,2])
+      board_template[4][1] = Bishop.new(:black, [4,2])
+      board_template[6][6] = King.new(:white, [6,6])
+      board_template[6][1] = Bishop.new(:white, [6,1])
+
+      board = Board.new(board_template)
+      expect(board.draw?).to be true
+    end
+  end
 end

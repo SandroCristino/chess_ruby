@@ -113,8 +113,6 @@ class Board
     true
   end
 
-
-
   def check_attack(target_position)
     target_row, target_col = target_position
 
@@ -208,6 +206,23 @@ class Board
         return true if temp_board.check?(color) == true
       end
     end
+
+    false
+  end
+
+  # Simplified draw
+  def draw?
+
+    # Get pieces from white and black
+    white_pieces = @board.flatten.select { |piece| piece&.color == :white}
+    black_pieces = @board.flatten.select { |piece| piece&.color == :black}
+
+    # Definde sufficient pieces
+    sufficient_pieces = [Queen, Pawn, Rook]
+
+    # Check if each side has at least one of them
+    return true if  white_pieces.none? { |piece| sufficient_pieces.include?(piece.class) } &&
+                    black_pieces.none? { |piece| sufficient_pieces.include?(piece.class) } 
 
     false
   end
