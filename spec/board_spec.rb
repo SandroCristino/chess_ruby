@@ -78,18 +78,27 @@ describe 'board' do
   end
 
   describe 'stalemate?' do
-    # Create board
-    board_template = Array.new(8) { Array.new(8, nil) }
-    board_template[2][3] = Queen.new(:white)
-    board_template[4][4] = Queen.new(:white)
-    board_template[1][0] = King.new(:black)
-
-    # Create instance
-    board = Board.new(board_template)
-
-    board.display
+   
     it 'return true' do
+
+      # Create board
+      board_template = Array.new(8) { Array.new(8, nil) }
+      board_template[2][3] = Queen.new(:white, [2,3])
+      board_template[4][4] = Queen.new(:white, [4,4])
+      board_template[1][0] = King.new(:black, [1,0])
+
+      # Create instance
+      board = Board.new(board_template)
+
       expect(board.stalemate?(:black)).to be true
+    end
+
+    it 'return false' do
+
+      # Create instance
+      board = Board.new
+
+      expect(board.stalemate?(:white)).to be false
     end
   end
 end

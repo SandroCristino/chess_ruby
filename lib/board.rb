@@ -15,26 +15,26 @@ class Board
 
   def setup_initialze(grid)
     # Initialize white
-    grid[0][0] = Rook.new(:black)
-    grid[0][1] = Knight.new(:black)
-    grid[0][2] = Bishop.new(:black)
-    grid[0][3] = Queen.new(:black)
-    grid[0][4] = King.new(:black)
-    grid[0][5] = Bishop.new(:black)
-    grid[0][6] = Knight.new(:black)
-    grid[0][7] = Rook.new(:black)
-    grid[1].map! { |_n| Pawn.new(:black) }
+    grid[0][0] = Rook.new(:black, [0,0])
+    grid[0][1] = Knight.new(:black, [0,1])
+    grid[0][2] = Bishop.new(:black, [0,2])
+    grid[0][3] = Queen.new(:black, [0,3])
+    grid[0][4] = King.new(:black, [0,4])
+    grid[0][5] = Bishop.new(:black, [0,5])
+    grid[0][6] = Knight.new(:black, [0,6])
+    grid[0][7] = Rook.new(:black, [0,7])
+    grid[1].map! { |n| Pawn.new(:black, [1,n]) }
 
     # Initialize black
-    grid[7][0] = Rook.new(:white)
-    grid[7][1] = Knight.new(:white)
-    grid[7][2] = Bishop.new(:white)
-    grid[7][3] = Queen.new(:white)
-    grid[7][4] = King.new(:white)
-    grid[7][5] = Bishop.new(:white)
-    grid[7][6] = Knight.new(:white)
-    grid[7][7] = Rook.new(:white)
-    grid[6].map! { |_n| Pawn.new(:white) }
+    grid[7][0] = Rook.new(:white, [7,0])
+    grid[7][1] = Knight.new(:white, [7,1])
+    grid[7][2] = Bishop.new(:white,[7,2] )
+    grid[7][3] = Queen.new(:white, [7,3])
+    grid[7][4] = King.new(:white, [7,4])
+    grid[7][5] = Bishop.new(:white, [7,5])
+    grid[7][6] = Knight.new(:white, [7,6])
+    grid[7][7] = Rook.new(:white, [7,7])
+    grid[6].map! { |n| Pawn.new(:white, [6,n]) }
   end
 
   def display
@@ -70,6 +70,9 @@ class Board
       # Move piece
       @board[target_row][target_col] = piece
       @board[current_row][current_col] = nil
+
+      # Update piece position
+      piece.update_position([target_row, target_col])
       true
     end
 
@@ -111,7 +114,7 @@ class Board
 
     # Check opponent pieces moves
     opponent_pieces.each do |piece|
-      return true if piece.valid_moves(piece_position(piece), piece_position(king))
+      return true if piece.valid_moves(piece.position, king.position)
     end
 
     false
@@ -120,23 +123,28 @@ class Board
   def checkmate?(color)
     # Find king
     king = find_king(color)
-    king_position = piece_position(king)
+    king_position = king.position
 
     # Check if the king is in check
     return false unless check?(color)
 
     # Iterate through all possible moves for the king
     king_row, king_col = king_position
+
+    # Iterate 3x3 grid
     (-1..1).each do |row_offset|
       (-1..1).each do |col_offset|
+
+        # Skip if king position
         next if row_offset == 0 && col_offset == 0
 
         target_row = king_row + row_offset
         target_col = king_col + col_offset
 
-        # Check if the move is valid and doesn't put the king in check
+        # Check if the move is valid
         next unless valid_move(king_position, [target_row, target_col])
 
+        # Check if doesn't put the king in check
         temp_board = Board.new(@board)
         temp_board.make_move(king_position, [target_row, target_col])
         return false unless temp_board.check?(color)
@@ -146,9 +154,44 @@ class Board
     true
   end
 
-  def stalemate?(color); end
+  def stalemate?(color)
+    # Return if check is true
+    return false if check?(color)
 
-  private
+    # Find king location
+    king = find_king(color)
+    king_position = king.position
+
+    # Iterate through all possible moves for the king
+    king_row, king_col = king_position
+
+    # Iterate 3x3 grid
+    (-1..1).each do |row_offset|
+      (-1..1).each do |col_offset|
+        
+        # Skip if king position
+        next if row_offset == 0 && col_offset == 0
+
+        target_row = king_row + row_offset
+        target_col = king_col + col_offset
+
+        # Skip if negative coordinates 
+        next if target_row < 0 || target_col < 0 
+
+        # Check if move is valid
+        next unless valid_move(king_position, [target_row, target_col])
+
+        # Check if doesn't put the king in check
+        temp_board = Board.new(@board)
+        temp_board.make_move(king_position, [target_row, target_col])
+        return true if temp_board.check?(color) == true
+      end
+    end
+
+    false
+  end
+
+  # private
 
   def find_king(color)
     @board.flatten.find { |piece| piece.is_a?(King) && piece.color == color }
@@ -159,14 +202,7 @@ class Board
       !piece.nil? && piece.color == color
     end
   end
-
-  def piece_position(piece)
-    @board.each_with_index do |row, row_index|
-      col_index = row.index(piece)
-      return [row_index, col_index] if col_index
-    end
-    nil
-  end
 end
 
-board = Board.new
+
+

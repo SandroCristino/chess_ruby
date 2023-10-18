@@ -1,16 +1,23 @@
 class Piece
-  attr_reader :color, :symbol
+  attr_reader :color, :symbol, :position
+  attr_accessor :position
 
   def initialize(color)
     @color = color      # Either white or black
     @symbol = color == :white ? '♔' : '♚'
+    @position = [nil, nil]
+  end
+
+  def update_position(position)
+    @position = position
   end
 end
 
 class King < Piece
-  def initialize(color)
+  def initialize(color, position)
     @color = color
     @symbol = color == :white ? '♔' : '♚'
+    @position = position  
   end
 
   def valid_moves(current_position, target_position)
@@ -28,9 +35,10 @@ class King < Piece
 end
 
 class Queen < Piece
-  def initialize(color)
+  def initialize(color, position)
     @color = color
     @symbol = color == :white ? '♕' : '♛'
+    @position = position
   end
 
   def valid_moves(current_position, target_position)
@@ -45,9 +53,10 @@ class Queen < Piece
 end
 
 class Rook < Piece
-  def initialize(color)
+  def initialize(color, position)
     super(color)
     @symbol = color == :white ? '♖' : '♜'
+    @position = position
   end
 
   def valid_moves(current_position, target_position)
@@ -61,9 +70,10 @@ class Rook < Piece
 end
 
 class Bishop < Piece
-  def initialize(color)
+  def initialize(color, position)
     super(color)
     @symbol = color == :white ? '♗' : '♝'
+    @position = position
   end
 
   def valid_moves(current_position, target_position)
@@ -76,9 +86,10 @@ class Bishop < Piece
 end
 
 class Knight < Piece
-  def initialize(color)
+  def initialize(color, position)
     super(color)
     @symbol = color == :white ? '♘' : '♞'
+    @position = position
   end
 
   def valid_moves(current_position, target_position)
@@ -92,9 +103,10 @@ class Knight < Piece
 end
 
 class Pawn < Piece
-  def initialize(color)
+  def initialize(color, position)
     super(color)
     @symbol = color == :white ? '♙' : '♟'
+    @position = position
   end
 
   def valid_moves(current_position, target_position)
