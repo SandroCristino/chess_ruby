@@ -142,4 +142,64 @@ describe 'board' do
       expect(board.draw?).to be true
     end
   end
+
+  describe 'castling' do 
+
+    before(:each) do
+      # Preparing board
+      temp_board = Array.new(8) { Array.new(8, nil) }
+      temp_board[0][0] = Rook.new(:black, [0,0])
+      temp_board[0][4] = King.new(:black, [0,4])
+      temp_board[0][3] = Queen.new(:black, [0,3])
+      temp_board[0][7] = Rook.new(:black, [0,7])
+      temp_board[7][0] = Rook.new(:white, [7,0])
+      temp_board[7][4] = King.new(:white, [7,4])
+      temp_board[7][6] = Knight.new(:white, [7,6])
+      temp_board[7][7] = Rook.new(:white, [7,7])
+
+      # Create instance
+      @board = Board.new(temp_board)
+    end
+  
+    it 'Black kingside > allowed' do
+
+      # Make move and get board state
+      @board.castle_kingside(:black)
+      board_state = @board.board
+
+      expect(board_state[0][6]).to be_a(King)
+      expect(board_state[0][5]).to be_a(Rook)
+      expect(board_state[0][4]).to be_nil
+      expect(board_state[0][7]).to be_nil
+    end
+
+    it 'Black queenside > ilegal' do
+       # Make move and get board state
+       @board.castle_queenside(:black)
+       board_state = @board.board
+
+       expect(board_state[0][4]).to be_a(King)
+       expect(board_state[0][0]).to be_a(Rook)
+    end
+
+    it 'White kingside > ilegal' do
+        # Make move and get board state
+        @board.castle_kingside(:white)
+        board_state = @board.board
+
+        expect(board_state[7][4]).to be_a(King)
+        expect(board_state[7][7]).to be_a(Rook)
+    end
+
+    it 'White queenside > allowed' do
+        # Make move and get board state
+        @board.castle_queenside(:white)
+        board_state = @board.board
+
+        expect(board_state[7][2]).to be_a(King)
+        expect(board_state[7][3]).to be_a(Rook)
+        expect(board_state[7][4]).to be_nil
+        expect(board_state[7][0]).to be_nil
+    end
+end
 end

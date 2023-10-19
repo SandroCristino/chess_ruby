@@ -227,7 +227,83 @@ class Board
     false
   end
 
+  def promotion(target_position, new_piece)
+    target_row, target_col = target_position
+    pawn = @board[target_row][target_col]
+
+    if pawn.is_a?(Pawn) && (target_row == 0 || target_row == 7)
+      # Replace the promoted pawn with the new_piece
+      @board[target_row][target_col] = new_piece
+      true
+    else
+      false
+    end
+  end
+
+
+  def castle_kingside(color)
+    king = find_king(color)
+    return false if king.first_move || check?(color) || !clear_path_kingside?(color)
+    
+    if color == :white
+
+      # King switch
+      @board[7][6] = @board[7][4]
+      @board[7][4] = nil
+
+      # Rook switch
+      @board[7][5] = @board[7][7] 
+      @board[7][7] = nil
+    else
+      
+      # King switch
+      @board[0][6] = @board[0][4]
+      @board[0][4] = nil
+
+      # Rook switch
+      @board[0][5] = @board[0][7] 
+      @board[0][7] = nil
+    end
+  end
+
+  def castle_queenside(color)
+    king = find_king(color)
+    return false if king.first_move || check?(color) || !clear_path_queenside?(color)
+    
+    if color == :white
+
+        # King switch
+        @board[7][2] = @board[7][4]
+        @board[7][4] = nil
+
+        # Rook switch
+        @board[7][3] = @board[7][0] 
+        @board[7][0] = nil
+      else
+    
+        # King switch
+        @board[0][2] = @board[0][4]
+        @board[0][4] = nil
+
+        # Rook switch
+        @board[0][3] = @board[0][0]
+        @board[0][0] = nil
+    end
+  end
+
   private
+
+  def clear_path_kingside?(color)
+    # Check for any pieces between the king and kingside rook
+    row = (color == :white) ? 7 : 0
+    (5..6).none? { |col| @board[row][col] }
+  end
+
+  def clear_path_queenside?(color)
+    # Check for any pieces between the king and queenside rook
+    row = (color == :white) ? 7 : 0
+    (1..3).none? { |col| @board[row][col] }
+  end
 
   def find_king(color)
     @board.flatten.find { |piece| piece.is_a?(King) && piece.color == color }
@@ -242,6 +318,6 @@ end
 
 board = Board.new
 
-board.valid_move([1, 1], [3, 1])
+
 
 

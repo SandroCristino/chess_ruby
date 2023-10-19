@@ -14,10 +14,13 @@ class Piece
 end
 
 class King < Piece
+  attr_reader :first_move
+
   def initialize(color, position)
     @color = color
     @symbol = color == :white ? '♔' : '♚'
     @position = position  
+    @first_move = false
   end
 
   def valid_moves(current_position, target_position)
@@ -30,7 +33,12 @@ class King < Piece
     col_difference = (current_col - target_col).abs
 
     # A King can move one square in any direction
-    (row_difference <= 1) && (col_difference <= 1)
+    if (row_difference <= 1) && (col_difference <= 1) 
+      @first_move = true
+      return true
+    end
+
+    false
   end
 end
 
@@ -125,3 +133,7 @@ class Pawn < Piece
     false
   end
 end
+
+king = King.new(:black, [0, 4])
+puts king.valid_moves([0,4], [0,5])
+puts king.first_move
