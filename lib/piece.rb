@@ -19,7 +19,7 @@ class King < Piece
   def initialize(color, position)
     @color = color
     @symbol = color == :white ? '♔' : '♚'
-    @position = position  
+    @position = position
     @first_move = false
   end
 
@@ -33,7 +33,7 @@ class King < Piece
     col_difference = (current_col - target_col).abs
 
     # A King can move one square in any direction
-    if (row_difference <= 1) && (col_difference <= 1) 
+    if (row_difference <= 1) && (col_difference <= 1)
       @first_move = true
       return true
     end
@@ -119,7 +119,7 @@ class Pawn < Piece
 
   def valid_moves(current_position, target_position)
     # Two steps move
-    two_steps_move = current_position[0] == 1 || current_position[0] == 6
+    two_steps_move = (current_position[0] == 1 && target_position[0] == 3) || (current_position[0] == 6 && target_position[0] == 4)
 
     # Black is above
     black_legal_move = color == :black && current_position[0] + 1 == target_position[0]
@@ -134,6 +134,5 @@ class Pawn < Piece
   end
 end
 
-king = King.new(:black, [0, 4])
-puts king.valid_moves([0,4], [0,5])
-puts king.first_move
+pawn = Pawn.new(:white, [6, 3])
+pawn.valid_moves([6, 3], [5, 2])

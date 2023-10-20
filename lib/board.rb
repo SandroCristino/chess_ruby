@@ -15,26 +15,26 @@ class Board
 
   def setup_initialze(grid)
     # Initialize white
-    grid[0][0] = Rook.new(:black, [0,0])
-    grid[0][1] = Knight.new(:black, [0,1])
-    grid[0][2] = Bishop.new(:black, [0,2])
-    grid[0][3] = Queen.new(:black, [0,3])
-    grid[0][4] = King.new(:black, [0,4])
-    grid[0][5] = Bishop.new(:black, [0,5])
-    grid[0][6] = Knight.new(:black, [0,6])
-    grid[0][7] = Rook.new(:black, [0,7])
-    grid[1].map! { |n| Pawn.new(:black, [1,n]) }
+    grid[0][0] = Rook.new(:black, [0, 0])
+    grid[0][1] = Knight.new(:black, [0, 1])
+    grid[0][2] = Bishop.new(:black, [0, 2])
+    grid[0][3] = Queen.new(:black, [0, 3])
+    grid[0][4] = King.new(:black, [0, 4])
+    grid[0][5] = Bishop.new(:black, [0, 5])
+    grid[0][6] = Knight.new(:black, [0, 6])
+    grid[0][7] = Rook.new(:black, [0, 7])
+    grid[1].map! { |n| Pawn.new(:black, [1, n]) }
 
     # Initialize black
-    grid[7][0] = Rook.new(:white, [7,0])
-    grid[7][1] = Knight.new(:white, [7,1])
-    grid[7][2] = Bishop.new(:white,[7,2] )
-    grid[7][3] = Queen.new(:white, [7,3])
-    grid[7][4] = King.new(:white, [7,4])
-    grid[7][5] = Bishop.new(:white, [7,5])
-    grid[7][6] = Knight.new(:white, [7,6])
-    grid[7][7] = Rook.new(:white, [7,7])
-    grid[6].map! { |n| Pawn.new(:white, [6,n]) }
+    grid[7][0] = Rook.new(:white, [7, 0])
+    grid[7][1] = Knight.new(:white, [7, 1])
+    grid[7][2] = Bishop.new(:white, [7, 2])
+    grid[7][3] = Queen.new(:white, [7, 3])
+    grid[7][4] = King.new(:white, [7, 4])
+    grid[7][5] = Bishop.new(:white, [7, 5])
+    grid[7][6] = Knight.new(:white, [7, 6])
+    grid[7][7] = Rook.new(:white, [7, 7])
+    grid[6].map! { |n| Pawn.new(:white, [6, n]) }
   end
 
   def display
@@ -86,13 +86,11 @@ class Board
     # Get piece
     piece = @board[current_row][current_col]
 
-    # Check if square is not empty, move is valid 
-    return false if piece.nil? || !piece.valid_moves(current_position, target_position) 
+    # Check if square is not empty, move is valid
+    return false if piece.nil? || !piece.valid_moves(current_position, target_position)
 
     # Check if target position is own player
-    if !@board[target_row][target_col].nil?
-      return false if @board[target_row][target_col].color == piece.color
-    end
+    return false if @board[target_row][target_col] && (@board[target_row][target_col].color == piece.color)
 
     # Check square between current and target position
     row_difference = current_row - target_row
@@ -101,13 +99,12 @@ class Board
 
     # Iterate over each square between current and target position
     (1...distance).each do |step|
-
       # Skip if piece is kinght
       next if piece.is_a?(Knight)
 
       row = current_row - (row_difference * step / distance)
       col = current_col - (col_difference * step / distance)
-      return false unless @board[row][col].nil? 
+      return false unless @board[row][col].nil?
     end
 
     true
@@ -153,7 +150,6 @@ class Board
     # Iterate 3x3 grid
     (-1..1).each do |row_offset|
       (-1..1).each do |col_offset|
-
         # Skip if king position
         next if row_offset == 0 && col_offset == 0
 
@@ -187,15 +183,14 @@ class Board
     # Iterate 3x3 grid
     (-1..1).each do |row_offset|
       (-1..1).each do |col_offset|
-        
         # Skip if king position
         next if row_offset == 0 && col_offset == 0
 
         target_row = king_row + row_offset
         target_col = king_col + col_offset
 
-        # Skip if negative coordinates 
-        next if target_row < 0 || target_col < 0 
+        # Skip if negative coordinates
+        next if target_row < 0 || target_col < 0 || target_row > 7 || target_col > 7
 
         # Check if move is valid
         next unless valid_move(king_position, [target_row, target_col])
@@ -212,17 +207,16 @@ class Board
 
   # Simplified draw
   def draw?
-
     # Get pieces from white and black
-    white_pieces = @board.flatten.select { |piece| piece&.color == :white}
-    black_pieces = @board.flatten.select { |piece| piece&.color == :black}
+    white_pieces = @board.flatten.select { |piece| piece&.color == :white }
+    black_pieces = @board.flatten.select { |piece| piece&.color == :black }
 
     # Definde sufficient pieces
     sufficient_pieces = [Queen, Pawn, Rook]
 
     # Check if each side has at least one of them
     return true if  white_pieces.none? { |piece| sufficient_pieces.include?(piece.class) } &&
-                    black_pieces.none? { |piece| sufficient_pieces.include?(piece.class) } 
+                    black_pieces.none? { |piece| sufficient_pieces.include?(piece.class) }
 
     false
   end
@@ -231,7 +225,7 @@ class Board
     target_row, target_col = target_position
     pawn = @board[target_row][target_col]
 
-    if pawn.is_a?(Pawn) && (target_row == 0 || target_row == 7)
+    if pawn.is_a?(Pawn) && [0, 7].include?(target_row)
       # Replace the promoted pawn with the new_piece
       @board[target_row][target_col] = new_piece
       true
@@ -240,11 +234,10 @@ class Board
     end
   end
 
-
   def castle_kingside(color)
     king = find_king(color)
     return false if king.first_move || check?(color) || !clear_path_kingside?(color)
-    
+
     if color == :white
 
       # King switch
@@ -252,16 +245,16 @@ class Board
       @board[7][4] = nil
 
       # Rook switch
-      @board[7][5] = @board[7][7] 
+      @board[7][5] = @board[7][7]
       @board[7][7] = nil
     else
-      
+
       # King switch
       @board[0][6] = @board[0][4]
       @board[0][4] = nil
 
       # Rook switch
-      @board[0][5] = @board[0][7] 
+      @board[0][5] = @board[0][7]
       @board[0][7] = nil
     end
   end
@@ -269,39 +262,57 @@ class Board
   def castle_queenside(color)
     king = find_king(color)
     return false if king.first_move || check?(color) || !clear_path_queenside?(color)
-    
+
     if color == :white
 
-        # King switch
-        @board[7][2] = @board[7][4]
-        @board[7][4] = nil
+      # King switch
+      @board[7][2] = @board[7][4]
+      @board[7][4] = nil
 
-        # Rook switch
-        @board[7][3] = @board[7][0] 
-        @board[7][0] = nil
-      else
-    
-        # King switch
-        @board[0][2] = @board[0][4]
-        @board[0][4] = nil
+      # Rook switch
+      @board[7][3] = @board[7][0]
+      @board[7][0] = nil
+    else
 
-        # Rook switch
-        @board[0][3] = @board[0][0]
-        @board[0][0] = nil
+      # King switch
+      @board[0][2] = @board[0][4]
+      @board[0][4] = nil
+
+      # Rook switch
+      @board[0][3] = @board[0][0]
+      @board[0][0] = nil
     end
+  end
+
+  def pawn_attack(current_position, target_position)
+    current_row, current_col = current_position
+    target_row, target_col = target_position
+
+    # Get color/ piece
+    piece = @board[current_row][current_col]
+    color = piece.color
+    opponent_color = @board[target_row][target_col].color
+
+    # Pawn is allowed just moving forward
+    moving_forward = (current_row < target_row && color == :black) || (current_row > target_row && color == :white)
+
+    return false unless piece.valid_moves(current_position, target_position)
+    return true if opponent_color != color && moving_forward && piece.is_a?(Pawn)
+
+    false
   end
 
   private
 
   def clear_path_kingside?(color)
     # Check for any pieces between the king and kingside rook
-    row = (color == :white) ? 7 : 0
+    row = color == :white ? 7 : 0
     (5..6).none? { |col| @board[row][col] }
   end
 
   def clear_path_queenside?(color)
     # Check for any pieces between the king and queenside rook
-    row = (color == :white) ? 7 : 0
+    row = color == :white ? 7 : 0
     (1..3).none? { |col| @board[row][col] }
   end
 
@@ -317,7 +328,4 @@ class Board
 end
 
 board = Board.new
-
-
-
-
+board.stalemate?(:white)

@@ -5,7 +5,7 @@ require_relative '../lib/piece'
 describe 'valid moves' do
   describe 'king' do
     # Create instance
-    king = King.new(:black,[0,4])
+    king = King.new(:black, [0, 4])
 
     it 'allowed moves' do
       # Horizontal move
@@ -27,7 +27,7 @@ describe 'valid moves' do
 
   describe 'queen' do
     # Create instance
-    queen = Queen.new(:black, [0,3])
+    queen = Queen.new(:black, [0, 3])
 
     it 'allowed moves' do
       # Horizontal move
@@ -49,7 +49,7 @@ describe 'valid moves' do
 
   describe 'rook' do
     # Create instance
-    rook = Rook.new(:black, [0,0])
+    rook = Rook.new(:black, [0, 0])
 
     it 'allowed moves' do
       # Vertical move
@@ -68,7 +68,7 @@ describe 'valid moves' do
 
   describe 'bishop' do
     # Create instance
-    bishop = Bishop.new(:black, [0,2])
+    bishop = Bishop.new(:black, [0, 2])
 
     it 'allowed moves' do
       # Diagonal moves
@@ -86,7 +86,7 @@ describe 'valid moves' do
 
   describe 'knight' do
     # Create instance
-    knight = Knight.new(:black, [0,1])
+    knight = Knight.new(:black, [0, 1])
 
     it 'allowed moves' do
       expect(knight.valid_moves([3, 3], [4, 1])).to be true
@@ -110,8 +110,8 @@ describe 'valid moves' do
 
   describe 'pawn' do
     # Create instance
-    pawn_black = Pawn.new(:black, [1,3])
-    pawn_white = Pawn.new(:white, [6,3])
+    pawn_black = Pawn.new(:black, [1, 3])
+    pawn_white = Pawn.new(:white, [6, 3])
 
     it 'allowed moves' do
       # One step ahead
@@ -127,8 +127,8 @@ describe 'valid moves' do
       # Ilegal horizintal move
       expect(pawn_black.valid_moves([3, 3], [2, 3])).to be false
 
-      # Ilegal two steps move
-      expect(pawn_black.valid_moves([6, 3], [5, 2])).to be false
+      # Ilegal diagonal move
+      expect(pawn_black.valid_moves([6, 3], [5, 1])).to be false
     end
   end
 end
