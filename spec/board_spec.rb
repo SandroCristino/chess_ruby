@@ -156,6 +156,11 @@ describe 'board' do
       @board = Board.new(temp_board)
     end
 
+    it 'check position casteling > allowed' do 
+      expect(@board.check_position_kingside([0,4], [0,6])).to be true
+      expect(@board.check_position_queenside([7,4], [7,2])).to be true
+    end
+
     it 'Black kingside > allowed' do
       # Make move and get board state
       @board.castle_kingside(:black)
@@ -218,6 +223,49 @@ describe 'board' do
     it 'diagonal attack > ilegal' do
       expect(board.pawn_attack([2, 5], [3, 6])).to be false
       expect(board.pawn_attack([2, 2], [1, 3])).to be false
+    end
+  end
+
+  describe 'promotion' do 
+        # Create template
+
+    board_template = Array.new(8) { Array.new(8, nil) }
+    board_template[0][1] = Pawn.new(:white, [0,1])
+    board_template[7][1] = Pawn.new(:black, [7,1])
+    board_template[2][2] = Pawn.new(:white, [2,2])
+    board_template[5][2] = Pawn.new(:black, [5,2])
+
+    # Create an instance
+    board = Board.new(board_template)
+
+    it 'check promotion > legal' do
+      expect(board.check_promotion([0,1])).to be true
+      expect(board.check_promotion([7,1])).to be true
+    end
+
+    it 'check promotion > ilegal' do
+      expect(board.check_promotion([2,2])).to be false
+      expect(board.check_promotion([5,2])).to be false
+    end
+
+    it 'run promotion black' do
+      new_piece = 'Queen'
+      target_position = [0,1]
+      allow(board).to receive(:gets).and_return("#{new_piece}\n")
+
+      board.run_promotion(target_position)
+      board_state = board.board
+      expect(board_state[0][1]).to be_a(Queen)
+    end
+
+    it 'run promotion white' do
+      new_piece = 'rook'
+      target_position = [7,1]
+      allow(board).to receive(:gets).and_return("#{new_piece}\n")
+      
+      board.run_promotion(target_position)
+      board_state = board.board
+      expect(board_state[7][1]).to be_a(Rook)
     end
   end
 end

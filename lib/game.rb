@@ -15,9 +15,10 @@ class Game
             puts "#{current_player}'s turn."
             begin
                 move = get_player_move
-                if valid_move?(move)
-                    make_move(move)
-                    switch_players
+                current_position, target_position = transform_move_format(move)
+                if valid_move?(current_position, target_position)
+                  make_move(current_position, target_position)
+                  switch_players
                 else
                     puts 'Invalid move. Please try again.'
                 end
@@ -53,20 +54,49 @@ class Game
     return !!move.match(pattern)
   end
 
-  def valid_move?(move)
+  def transform_move_format(move)
 
-    # Transform move format
-    current_row = move[0].to_i + 1
-    current_col = move[1].orb - 'a'.orb
-    target_row = move[2].to_i + 1
-    target_col = move[3].orb - 'a'.orb
+     # Transform move format
+     current_row = move[1].to_i - 1
+     current_col = move[0].ord - 'a'.ord
+     target_row = move[3].to_i - 1
+     target_col = move[2].ord - 'a'.ord
 
-    # Return true if move is valid
-    return @board.valid_move([current_row, current_col], [target_row, target_col])
+    current_position = [current_row, current_col]
+    target_position = [target_row, target_col]
+
+    return current_position, target_position
   end
 
-  def make_move(move)
-    # Make the move on the board
+  def valid_move?(current_position, target_position)
+    # Return true if move is valid
+    return @board.valid_move(current_position, target_position)     
+  end
+
+  def make_move(current_position, target_position)
+    # Get positions
+    current_row, current_col = current_position
+    target_row, target_col = target_position
+
+    # Get color
+    color = @board[current_row][current_col].color
+
+    # Check casteling 
+    if @board.check_position_queenside(current_position, target_position)
+      @board.castle_queenside(color)
+      return
+    elsif @board.check_position_kingside(current_position, target_position)
+      @board.castle_kingside(color)
+      return
+    end
+
+    # Make move
+    @board.make_move(current_position, target_position)
+
+    # Check for promotion
+    if @board.check_promotion(target_position)
+      @board.run_promotion(target_position)
+    end
   end
 
   def switch_players
@@ -85,3 +115,8 @@ class Game
     # Return the current player (e.g., :white or :black)
   end
 end
+
+game = Game.new
+move_pawn = 'h2h3'
+move_knight = 'g1f3'
+# game.valid_move?(move_pawn) 

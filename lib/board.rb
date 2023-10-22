@@ -221,22 +221,50 @@ class Board
     false
   end
 
-  def promotion(target_position, new_piece)
+  def check_promotion(target_position)
     target_row, target_col = target_position
     pawn = @board[target_row][target_col]
-
     if pawn.is_a?(Pawn) && [0, 7].include?(target_row)
-      # Replace the promoted pawn with the new_piece
-      @board[target_row][target_col] = new_piece
       true
     else
       false
     end
   end
 
+  def run_promotion(target_position)
+    target_row, target_col = target_position
+    pawn = @board[target_row][target_col]
+    color = pawn.color
+
+    # Get new piece
+    input = ''
+    pieces = ['rook', 'knight', 'bishop', 'queen']
+
+    while true 
+      puts 'Type your piece: rook, knight, bishop, queen'
+      input = gets.chomp.downcase 
+      break if pieces.include?(input)
+    end
+
+    case input
+    when 'rook'
+      new_piece = Rook
+    when 'knight'
+      new_piece = Knight
+    when 'bishop'
+      new_piece = Bishop
+    when 'queen'
+      new_piece = Queen
+    end
+
+    @board[target_row][target_col] = new_piece.new(color, [target_row, target_col])
+  end
+
   def castle_kingside(color)
     king = find_king(color)
     return false if king.first_move || check?(color) || !clear_path_kingside?(color)
+
+    # Check if current and target poistion is proper castle position
 
     if color == :white
 
@@ -302,6 +330,34 @@ class Board
     false
   end
 
+  def check_position_kingside(current_position,target_position)
+    # Get position
+    current_row, current_col = current_position
+    target_row, target_col = target_position
+
+    # Get piece
+    piece = @board[current_row][current_col]
+
+    return false unless piece.is_a?(King) || piece.is_a?(Rook)
+    return true if (current_row == 0 || current_row == 7) && (current_col == 4 || current_col == 7) && (target_row == 0 || target_row == 7) && (target_col == 6 || target_col == 5)
+
+    false
+  end
+  
+  def check_position_queenside(current_position,target_position)
+    # Get position
+    current_row, current_col = current_position
+    target_row, target_col = target_position
+
+    # Get piece
+    piece = @board[current_row][current_col]
+
+    return false unless piece.is_a?(King) || piece.is_a?(Rook)
+    return true if (current_row == 0 || current_row == 7) && (current_col == 4 || current_col == 7) && (target_row == 0 || target_row == 7) && (target_col == 2 || target_col == 3)
+  
+    false
+  end
+
   private
 
   def clear_path_kingside?(color)
@@ -327,5 +383,4 @@ class Board
   end
 end
 
-board = Board.new
-board.stalemate?(:white)
+

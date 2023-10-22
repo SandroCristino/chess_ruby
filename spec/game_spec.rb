@@ -30,20 +30,24 @@ describe 'game' do
         end
     end
 
-    # describe 'valid_move?' do
-    #     it 'return true' do
-    #         move_pawn = 'h2h3'
-    #         move_knight = 'g1f3'
-    #         expect(@game.valid_move?(move_pawn)).to be true
-    #         expect(@game.valid_move?(move_knight)).to be true
-    #     end
+    describe 'valid_move?' do
+        it 'return true' do
+            move_pawn = 'h2h3'
+            move_knight = 'g1f3'
+            current_position_pawn, target_position_pawn  = @game.transform_move_format(move_pawn)
+            current_position_knight, target_position_knight = @game.transform_move_format(move_knight)
+            expect(@game.valid_move?(current_position_pawn, target_position_pawn)).to be true
+            expect(@game.valid_move?(current_position_knight, target_position_knight)).to be true
+        end
 
-    #     it 'return false' do
-    #         move_rook = 'a1a5'
-    #         move_queen = 'e1e0'
-    #         expect(@game.valid_move?(move_rook)).to be false
-    #         expect(@game.valid_move?(move_queen)).to be false
-    #     end
-    # end
+        it 'return false' do
+            move_rook = 'a1a5'
+            move_queen = 'e1e8'
+            current_position_rook, target_position_rook  = @game.transform_move_format(move_rook)
+            current_position_queen, target_position_queen = @game.transform_move_format(move_queen)
+            expect(@game.valid_move?(current_position_rook, target_position_rook)).to be false
+            expect(@game.valid_move?(current_position_queen, target_position_queen)).to be false
+        end
+    end
 
 end
