@@ -25,6 +25,8 @@ describe 'board' do
       board_template[1][3] = Rook.new(:black, [1, 3])
       board_template[2][2] = Pawn.new(:black, [2, 2])
       board_template[3][1] = Bishop.new(:white, [3, 1])
+      board_template[7][7] = King.new(:black, [7, 7])
+      board_template[0][7] = King.new(:white, [0, 7])
 
       new_board = Board.new(board_template)
 
@@ -39,19 +41,28 @@ describe 'board' do
       expect(board.valid_move([7, 1], [7, 4])).to be false
       expect(board.valid_move([0, 0], [6, 1])).to be false
     end
+
+    # Create template
+    board_template1 = Array.new(8) { Array.new(8, nil) }
+    board_template1[1][1] = King.new(:black, [1, 1])
+    board_template1[1][3] = Rook.new(:white, [1, 3])
+
+    # Create instance
+    board1 = Board.new(board_template1)
+
+    it 'return false' do
+      expect(board1.valid_move([1, 1], [1, 2])).to be false
+    end
   end
 
   describe 'check?' do
+    # Create template
+    board_template = Array.new(8) { Array.new(8, nil) }
+    board_template[2][3] = King.new(:black, [2, 2])
+    board_template[1][3] = Rook.new(:white, [5, 2])
+
     # Create instance
-    board = Board.new
-
-    # Prepare board for check
-    board.make_move([1, 3], [2, 3])
-    board.make_move([0, 4], [1, 3])
-    board.make_move([6, 6], [4, 6])
-    board.make_move([7, 5], [6, 6])
-    board.make_move([6, 6], [2, 2])
-
+    board = Board.new(board_template)
     # FOR USING: DEACTIVATE PRIVATE IN BOARD CLASS
 
     # it 'return king location' do
@@ -66,26 +77,14 @@ describe 'board' do
   end
 
   describe 'checkmate?' do
-    # Create instance
-    board = Board.new
+    # Create template
+    board_template = Array.new(8) { Array.new(8, nil) }
+    board_template[2][3] = King.new(:black, [2, 2])
+    board_template[1][3] = Queen.new(:white, [5, 2])
+    board_template[1][3] = Queen.new(:white, [2, 5])
 
-    # Prepare board for checkmate
-    board.make_move([1, 3], [2, 3])
-    board.make_move([0, 4], [1, 3])
-    board.make_move([6, 6], [4, 6])
-    board.make_move([7, 5], [6, 6])
-    board.make_move([6, 6], [2, 2])
-    board.make_move([2, 3], [3, 3])
-    board.make_move([6, 7], [4, 7])
-    board.make_move([7, 7], [5, 7])
-    board.make_move([5, 7], [5, 4])
-    board.make_move([5, 4], [2, 4])
-    board.make_move([2, 4], [2, 3])
-    board.make_move([6, 4], [4, 4])
-    board.make_move([4, 4], [3, 4])
-    board.make_move([3, 4], [2, 4])
-    board.make_move([7, 3], [6, 4])
-    board.make_move([6, 4], [3, 4])
+    # Create instance
+    board = Board.new(board_template)
 
     board.checkmate?(:black)
     it 'return true' do
@@ -156,9 +155,9 @@ describe 'board' do
       @board = Board.new(temp_board)
     end
 
-    it 'check position casteling > allowed' do 
-      expect(@board.check_position_kingside([0,4], [0,6])).to be true
-      expect(@board.check_position_queenside([7,4], [7,2])).to be true
+    it 'check position casteling > allowed' do
+      expect(@board.check_position_kingside([0, 4], [0, 6])).to be true
+      expect(@board.check_position_queenside([7, 4], [7, 2])).to be true
     end
 
     it 'Black kingside > allowed' do
@@ -226,31 +225,30 @@ describe 'board' do
     end
   end
 
-  describe 'promotion' do 
-        # Create template
-
+  describe 'promotion' do
+    # Create template
     board_template = Array.new(8) { Array.new(8, nil) }
-    board_template[0][1] = Pawn.new(:white, [0,1])
-    board_template[7][1] = Pawn.new(:black, [7,1])
-    board_template[2][2] = Pawn.new(:white, [2,2])
-    board_template[5][2] = Pawn.new(:black, [5,2])
+    board_template[0][1] = Pawn.new(:white, [0, 1])
+    board_template[7][1] = Pawn.new(:black, [7, 1])
+    board_template[2][2] = Pawn.new(:white, [2, 2])
+    board_template[5][2] = Pawn.new(:black, [5, 2])
 
     # Create an instance
     board = Board.new(board_template)
 
     it 'check promotion > legal' do
-      expect(board.check_promotion([0,1])).to be true
-      expect(board.check_promotion([7,1])).to be true
+      expect(board.check_promotion([0, 1])).to be true
+      expect(board.check_promotion([7, 1])).to be true
     end
 
     it 'check promotion > ilegal' do
-      expect(board.check_promotion([2,2])).to be false
-      expect(board.check_promotion([5,2])).to be false
+      expect(board.check_promotion([2, 2])).to be false
+      expect(board.check_promotion([5, 2])).to be false
     end
 
     it 'run promotion black' do
       new_piece = 'Queen'
-      target_position = [0,1]
+      target_position = [0, 1]
       allow(board).to receive(:gets).and_return("#{new_piece}\n")
 
       board.run_promotion(target_position)
@@ -260,9 +258,9 @@ describe 'board' do
 
     it 'run promotion white' do
       new_piece = 'rook'
-      target_position = [7,1]
+      target_position = [7, 1]
       allow(board).to receive(:gets).and_return("#{new_piece}\n")
-      
+
       board.run_promotion(target_position)
       board_state = board.board
       expect(board_state[7][1]).to be_a(Rook)

@@ -92,6 +92,9 @@ class Board
     # Check if target position is own player
     return false if @board[target_row][target_col] && (@board[target_row][target_col].color == piece.color)
 
+    # Check if next move result in checkmate
+    return false if next_move_checkmate?(current_position, target_position)
+
     # Check square between current and target position
     row_difference = current_row - target_row
     col_difference = current_col - target_col
@@ -238,11 +241,11 @@ class Board
 
     # Get new piece
     input = ''
-    pieces = ['rook', 'knight', 'bishop', 'queen']
+    pieces = %w[rook knight bishop queen]
 
-    while true 
+    while true
       puts 'Type your piece: rook, knight, bishop, queen'
-      input = gets.chomp.downcase 
+      input = gets.chomp.downcase
       break if pieces.include?(input)
     end
 
@@ -330,7 +333,7 @@ class Board
     false
   end
 
-  def check_position_kingside(current_position,target_position)
+  def check_position_kingside(current_position, target_position)
     # Get position
     current_row, current_col = current_position
     target_row, target_col = target_position
@@ -339,12 +342,17 @@ class Board
     piece = @board[current_row][current_col]
 
     return false unless piece.is_a?(King) || piece.is_a?(Rook)
-    return true if (current_row == 0 || current_row == 7) && (current_col == 4 || current_col == 7) && (target_row == 0 || target_row == 7) && (target_col == 6 || target_col == 5)
+    if [0,
+        7].include?(current_row) && [4,
+                                     7].include?(current_col) && [0,
+                                                                  7].include?(target_row) && [6, 5].include?(target_col)
+      return true
+    end
 
     false
   end
-  
-  def check_position_queenside(current_position,target_position)
+
+  def check_position_queenside(current_position, target_position)
     # Get position
     current_row, current_col = current_position
     target_row, target_col = target_position
@@ -353,12 +361,40 @@ class Board
     piece = @board[current_row][current_col]
 
     return false unless piece.is_a?(King) || piece.is_a?(Rook)
-    return true if (current_row == 0 || current_row == 7) && (current_col == 4 || current_col == 7) && (target_row == 0 || target_row == 7) && (target_col == 2 || target_col == 3)
-  
+    if [0,
+        7].include?(current_row) && [4,
+                                     7].include?(current_col) && [0,
+                                                                  7].include?(target_row) && [2, 3].include?(target_col)
+      return true
+    end
+
     false
   end
 
   private
+
+  def next_move_checkmate?(current_position, target_position)
+    # Get position
+    current_row, current_col = current_position
+    target_row, target_col = target_position
+
+    #  Create instance
+    temp_board = Board.new(@board)
+
+    piece = temp_board.board[current_row][current_col]
+    return false if piece.nil?
+
+    # Get color
+    color = piece.color
+
+    # Simulate move
+    temp_board.board[target_row][target_col] = piece
+    temp_board.board[current_row][current_col] = nil
+    piece.update_position([target_row, target_col])
+
+    # Check if checkmate
+    temp_board.check?(color)
+  end
 
   def clear_path_kingside?(color)
     # Check for any pieces between the king and kingside rook
@@ -383,4 +419,13 @@ class Board
   end
 end
 
+# Create board
+board_template = Array.new(8) { Array.new(8, nil) }
+board_template[2][3] = Queen.new(:white, [2, 3])
+board_template[4][4] = Queen.new(:white, [4, 4])
+board_template[1][0] = King.new(:black, [1, 0])
 
+# Create instance
+board = Board.new(board_template)
+
+p board.stalemate?(:black)
